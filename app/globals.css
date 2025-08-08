@@ -1,17 +1,34 @@
 @import "tailwindcss";
 
+/* ===========================
+   🎨 Variáveis globais
+   =========================== */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #ffffff; /* Cor de fundo padrão (claro) */
+  --foreground: #171717; /* Cor do texto padrão (claro) */
+
+  /* Paleta de marca (Jack Designer) */
+  --brand-yellow: #ffd43b;
+  --brand-gold: #c9a227;
+  --brand-black: #0a0a0a;
+  --brand-white: #ffffff;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-brand-yellow: var(--brand-yellow);
+  --color-brand-gold: var(--brand-gold);
+  --color-brand-black: var(--brand-black);
+  --color-brand-white: var(--brand-white);
+
+  --font-sans: var(--font-geist-sans, Arial, Helvetica, sans-serif);
+  --font-mono: var(--font-geist-mono, monospace);
 }
 
+/* ===========================
+   🌙 Modo escuro
+   =========================== */
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -19,8 +36,130 @@
   }
 }
 
+/* ===========================
+   🖋️ Estilos base
+   =========================== */
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  line-height: 1.5;
+}
+
+/* ===========================
+   🔗 Links
+   =========================== */
+a {
+  color: var(--brand-yellow);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--brand-gold);
+}
+/* ==== Efeitos Globais (suaves) ==== */
+@keyframes fadeDown {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shine {
+  0% {
+    transform: translateX(-150%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(150%) skewX(-20deg);
+  }
+}
+
+/* Aparecer de cima ao carregar */
+.header-appear {
+  animation: fadeDown 0.5s ease both;
+}
+
+/* Botão com “faixa de brilho” */
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+}
+.btn-shine::after {
+  content: "";
+  position: absolute;
+  top: -120%;
+  bottom: -120%;
+  left: -120%;
+  width: 40%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+  animation: shine 2.4s ease-in-out infinite;
+}
+
+/* Respeita reduzir animações do usuário */
+@media (prefers-reduced-motion: reduce) {
+  .header-appear {
+    animation: none;
+  }
+  .btn-shine::after {
+    display: none;
+  }
+}
+@keyframes lineShine {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.header-line {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 212, 59, 0.35),
+    var(--color-brand-yellow),
+    rgba(255, 212, 59, 0.35),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: lineShine 10s linear infinite; /* era 4s */
+  box-shadow: 0 0 14px rgba(255, 212, 59, 0.35);
+}
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes floatY {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+.fade-up {
+  animation: fadeUp 0.6s ease both;
+}
+.float-y {
+  animation: floatY 2.2s ease-in-out infinite;
 }
