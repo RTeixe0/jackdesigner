@@ -48,7 +48,7 @@ export default function Header() {
               alt="Jack Designer"
               width={150}
               height={110}
-              className="md:hidden h-auto w-[132px] sm:w-[150px] drop-shadow-[0_0_10px_rgba(255,212,59,.25)]"
+              className="md:hidden h-auto w-[250px] sm:w-[150px] drop-shadow-[0_0_10px_rgba(255,212,59,.25)]"
               sizes="(max-width:767px) 150px, 0px"
             />
           </Link>
