@@ -155,3 +155,6 @@ a:hover {
   color: inherit !important;
   fill: inherit !important;
 }
+html {
+  scroll-behavior: smooth;
+}
