@@ -44,7 +44,7 @@ export default function Header() {
             />
             {/* Mobile */}
             <Image
-              src="/logo-stacked.png"
+              src="/logo-horizontal.png"
               alt="Jack Designer"
               width={150}
               height={110}
