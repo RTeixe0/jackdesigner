@@ -163,3 +163,8 @@ a:hover {
 .float-y {
   animation: floatY 2.2s ease-in-out infinite;
 }
+/* ===== CTAs: neutraliza a cor global de links dentro do container .cta ===== */
+.cta :is(a, a *) {
+  color: inherit !important; /* herda a cor que definirmos no próprio botão */
+  fill: inherit !important; /* ícones/svgs herdam também */
+}
