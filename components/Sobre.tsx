@@ -3,7 +3,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-function Counter({ end, duration = 3000 }: { end: number; duration?: number }) {
+function Counter({ end, duration = 2500 }: { end: number; duration?: number }) {
   const [value, setValue] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
 
@@ -65,7 +65,7 @@ export default function Sobre() {
             current += 1;
             setStars(current);
             if (current < 5) {
-              setTimeout(tick, 400); // velocidade da aparição (ajuste fino)
+              setTimeout(tick, 450); // velocidade da aparição (ajuste fino)
             } else {
               io.disconnect();
             }
