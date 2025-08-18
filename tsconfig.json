@@ -2,25 +2,29 @@
   "compilerOptions": {
     "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noEmit": true,
-    "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
     "jsx": "preserve",
+
+    "strict": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "noEmit": true,
     "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
-    "paths": {
-      "@/*": ["./*"]
-    }
+
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+
+    "baseUrl": ".", // ✅ precisa para o alias "@/*"
+    "paths": { "@/*": ["./*"] },
+
+    // Opcionais (bons com TS 5 + bundlers modernos):
+    // "verbatimModuleSyntax": true,      // melhora checagem de ESM/CJS
+    // "noUncheckedIndexedAccess": true,  // segurança extra com indexação
+    // "forceConsistentCasingInFileNames": true
+
+    "plugins": [{ "name": "next" }],
+    "allowJs": true // deixe true só se você realmente usar .js
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
