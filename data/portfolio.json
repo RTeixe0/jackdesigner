@@ -11,7 +11,7 @@
   },
   {
     "file_name": "3.jpeg",
-    "category": "letra_caixa",
+    "category": "acm",
     "client": "d-market home"
   },
   {
@@ -27,16 +27,16 @@
   {
     "file_name": "6.jpeg",
     "category": "letra_caixa",
-    "client": "AG Imobiliaria"
+    "client": "A Imobiliaria"
   },
   {
     "file_name": "7.jpeg",
-    "category": "acm",
+    "category": "letra_caixa",
     "client": "Imobiliaria Morare"
   },
   {
     "file_name": "8.jpeg",
-    "category": "luminoso",
+    "category": "letra_caixa",
     "client": "Imobiliaria Morare"
   },
   {
@@ -77,32 +77,32 @@
   {
     "file_name": "16.jpeg",
     "category": "letra_caixa",
-    "client": "Maria Favera"
+    "client": "Maria Faceira"
   },
   {
     "file_name": "17.jpeg",
     "category": "letra_caixa",
-    "client": "Maria Favera"
+    "client": "Maria Faceira"
   },
   {
     "file_name": "18.jpeg",
     "category": "letra_caixa",
-    "client": "Flores e Bela Boutique"
+    "client": "Flores Bella Boutique"
   },
   {
     "file_name": "19.jpeg",
     "category": "letra_caixa",
-    "client": "Flores e Bela Boutique"
+    "client": "Flores Bella Boutique"
   },
   {
     "file_name": "20.jpeg",
     "category": "letra_caixa",
-    "client": "Sacrum Cor Tecidos"
+    "client": "Sacrum Cor"
   },
   {
     "file_name": "21.jpeg",
     "category": "letra_caixa",
-    "client": "Sacrum Cor Tecidos"
+    "client": "Sacrum Cor"
   },
   {
     "file_name": "22.jpeg",
@@ -216,28 +216,28 @@
   },
   {
     "file_name": "44.jpeg",
-    "category": "letra_caixa",
-    "client": "Aroni Carvalho"
+    "category": "luminoso",
+    "client": "Carolini Carvalho"
   },
   {
     "file_name": "45.jpeg",
     "category": "letra_caixa",
-    "client": "Dental Clinic"
+    "client": "Carolini Carvalho"
   },
   {
     "file_name": "46.jpeg",
     "category": "letra_caixa",
-    "client": "Casa do Rio Restaurante"
+    "client": "Boteco Tijuca"
   },
   {
     "file_name": "47.jpeg",
     "category": "letra_caixa",
-    "client": "Casa do Rio Restaurante"
+    "client": "Boteco Tijuca"
   },
   {
     "file_name": "48.jpeg",
     "category": "letra_caixa",
-    "client": "Casa do Rio Restaurante"
+    "client": "Boteco Tijuca"
   },
   {
     "file_name": "49.jpeg",
@@ -281,12 +281,12 @@
   },
   {
     "file_name": "57.jpeg",
-    "category": "painel_impresso",
+    "category": "acm",
     "client": "Mimo Pet's"
   },
   {
     "file_name": "58.jpeg",
-    "category": "painel_impresso",
+    "category": "acm",
     "client": "Mimo Pet's"
   },
   {
@@ -296,7 +296,7 @@
   },
   {
     "file_name": "60.jpeg",
-    "category": "painel_impresso",
+    "category": "acm",
     "client": "Mimo Pet's"
   }
 ]

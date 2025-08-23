@@ -1,29 +1,44 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Image from "next/image";
 
 const WHATSAPP = "5519996565458";
 
 export default function Hero() {
+  const images = ["/hero.jpg", "/hero2.jpg"];
+  const [currentImage, setCurrentImage] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImage((prev) => (prev === 0 ? 1 : 0));
+    }, 5000); // alterna a cada 5s
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <section id="hero" aria-label="Destaque Jack Designer">
-      {/* Imagem do hero */}
+      {/* Hero com crossfade */}
       <div className="relative w-full h-[36vh] sm:h-[46vh] md:h-[66vh] lg:h-[76vh] overflow-hidden">
-        <Image
-          src="/hero.jpg"
-          alt="Fachada da Jack Designer com letras em ACM e iluminação"
-          fill
-          priority
-          sizes="100vw"
-          className="object-contain md:object-cover"
-        />
+        {images.map((src, index) => (
+          <Image
+            key={src}
+            src={src}
+            alt="Fachada da Jack Designer com letras em ACM e iluminação"
+            fill
+            priority
+            sizes="100vw"
+            className={`object-contain md:object-cover absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+              index === currentImage ? "opacity-100" : "opacity-0"
+            }`}
+          />
+        ))}
         <div className="hidden md:block absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-black/25 to-transparent pointer-events-none" />
       </div>
 
-      {/* Texto + CTAs */}
+      {/* Texto + CTAs (igual ao seu código) */}
       <div className="mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8">
         <header className="mx-auto text-center">
-          {/* Título com balance e largura controlada */}
           <h1
             className="
               text-3xl sm:text-4xl md:text-5xl font-semibold
@@ -35,11 +50,9 @@ export default function Hero() {
             <span className="text-[--color-brand-yellow]">
               destacam a sua marca em Mogi Guaçu e região
             </span>
-            {/* quebra sutil só em md+ para respiro */}
             <br className="hidden md:block" />
           </h1>
 
-          {/* Parágrafo com pretty wrap e largura ideal */}
           <p
             className="
               mt-3 sm:mt-4 text-base md:text-lg text-slate-300
@@ -54,9 +67,7 @@ export default function Hero() {
           </p>
         </header>
 
-        {/* CTAs */}
         <div className="cta mt-5 md:mt-6 flex flex-col sm:flex-row gap-4 sm:gap-5 items-center justify-center">
-          {/* Primário – WhatsApp */}
           <a
             href={`https://wa.me/${WHATSAPP}?text=Olá!%20Quero%20um%20orçamento%20de%20fachada%20em%20Mogi%20Guaçu.`}
             target="_blank"
@@ -83,7 +94,6 @@ export default function Hero() {
             Pedir orçamento no WhatsApp
           </a>
 
-          {/* Secundário – Portfólio */}
           <a
             href="#portfolio"
             aria-label="Ver portfólio de fachadas"
