@@ -22,6 +22,7 @@ type ItemJSON = {
   file_name: string;
   category: string;
   client: string;
+  ordem?: number | null; // novo campo opcional
 };
 
 type Item = {
@@ -29,13 +30,15 @@ type Item = {
   media: MediaImage;
   category: string;
   client: string;
+  ordem?: number | null;
 };
 
 type Group = {
   key: string;
   title: string;
   description?: string;
-  items: Media[];
+  itemsAll: Media[]; // todos os itens do grupo (ordenados conforme regra)
+  limit: number; // quantos mostrar antes do "ver mais"
 };
 
 /* =========================================================
@@ -60,37 +63,52 @@ function useContainerWidth<T extends HTMLElement>() {
 }
 
 /* =========================================================
-   Galeria Masonry (mosaico)
+   Galeria Masonry (mosaico) — responsiva
    ========================================================= */
 function MasonryGallery({
   items,
   onOpen,
-  minColumnWidth = 260,
-  gap = 12,
 }: {
   items: Media[];
   onOpen: (idx: number) => void;
-  minColumnWidth?: number;
-  gap?: number;
 }) {
   const { ref, width } = useContainerWidth<HTMLDivElement>();
 
-  const columns = useMemo(() => {
-    if (width <= 0) return 1;
-    const count = Math.max(1, Math.floor(width / (minColumnWidth + gap)));
-    return count;
-  }, [width, minColumnWidth, gap]);
+  // Colunas e gaps responsivos pelo espaço disponível
+  const { columns, columnWidth, gap } = useMemo(() => {
+    if (width <= 0) {
+      return { columns: 1, columnWidth: 300, gap: 12 };
+    }
+    // breakpoints suaves por largura do container
+    let minCol = 140;
+    let g = 10;
+    if (width >= 480) {
+      minCol = 160;
+      g = 12;
+    }
+    if (width >= 768) {
+      minCol = 200;
+      g = 14;
+    }
+    if (width >= 1024) {
+      minCol = 240;
+      g = 16;
+    }
+    if (width >= 1360) {
+      minCol = 260;
+      g = 18;
+    }
 
-  const columnWidth = useMemo(() => {
-    if (columns <= 0) return minColumnWidth;
-    const totalGaps = (columns - 1) * gap;
-    return Math.floor((width - totalGaps) / columns);
-  }, [width, columns, gap, minColumnWidth]);
+    const cols = Math.max(1, Math.floor((width + g) / (minCol + g)));
+    const totalGaps = (cols - 1) * g;
+    const colW = Math.floor((width - totalGaps) / cols);
+    return { columns: cols, columnWidth: colW, gap: g };
+  }, [width]);
 
   return (
     <div
       ref={ref}
-      className="w-full transition-opacity duration-500"
+      className="w-full transition-opacity duration-300"
       style={{ opacity: width ? 1 : 0 }}
       aria-busy={!width}
     >
@@ -113,8 +131,10 @@ function MasonryGallery({
                 alt={m.alt}
                 width={m.w}
                 height={m.h}
-                sizes={`${columnWidth}px`}
-                className="h-auto w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                // Melhora responsividade: o browser sabe o alvo de largura
+                sizes={`(max-width: 480px) 100vw, (max-width: 768px) 50vw, ${columnWidth}px`}
+                className="h-auto w-full object-cover transition-transform duration-300 group-hover:scale-[1.015]"
+                priority={idx < 3}
               />
             ) : (
               <video
@@ -123,7 +143,7 @@ function MasonryGallery({
                 loop
                 autoPlay
                 poster={(m as MediaVideo).poster}
-                className="h-auto w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                className="h-auto w-full object-cover transition-transform duration-300 group-hover:scale-[1.015]"
               >
                 <source src={(m as MediaVideo).src} type="video/mp4" />
               </video>
@@ -147,31 +167,16 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 const CATEGORIES_ORDER = ["acm", "letra_caixa", "luminoso", "painel_impresso"];
 
-/* =========================================================
-   Ícones inline
-   ========================================================= */
-const IconGrid = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24">
-    <path
-      fill="currentColor"
-      d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 8v-8h8v8h-8z"
-    />
-  </svg>
-);
-const IconUsers = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24">
-    <path
-      fill="currentColor"
-      d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3s1.34 3 3 3m-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5S5 6.34 5 8s1.34 3 3 3m0 2c-2.33 0-7 1.17-7 3.5V20h14v-3.5C19 14.17 14.33 13 12 13m8 1c-.29 0-.62.02-.97.05c1.16.84 1.97 1.93 1.97 3.45V20h3v-3.5c0-2.33-4.67-3.5-7-3.5z"
-    />
-  </svg>
-);
+// ordem indefinida vai para o fim
+const ordVal = (n?: number | null) =>
+  typeof n === "number" && Number.isFinite(n) ? n : Number.POSITIVE_INFINITY;
 
 /* =========================================================
    Componente principal
    ========================================================= */
 export default function Portfolio() {
   const [mode, setMode] = useState<"categoria" | "cliente">("categoria");
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({}); // por grupo
 
   const DEFAULT_W = 1600;
   const DEFAULT_H = 1200;
@@ -181,6 +186,7 @@ export default function Portfolio() {
       id: `${i}-${d.file_name}`,
       category: d.category,
       client: d.client,
+      ordem: d.ordem ?? null,
       media: {
         type: "image",
         src: `/portfolio/${d.file_name}`,
@@ -191,48 +197,89 @@ export default function Portfolio() {
     }));
   }, []);
 
+  /* ===================== MODO CATEGORIA =====================
+     - mostra 5 por categoria (menor `ordem` primeiro)
+     - “ver mais +” revela o restante da categoria
+  */
   const groupsByCategory: Group[] = useMemo(() => {
-    const map = new Map<string, Media[]>();
+    const map = new Map<string, Item[]>();
     for (const it of items) {
       if (!map.has(it.category)) map.set(it.category, []);
-      map.get(it.category)!.push(it.media);
+      map.get(it.category)!.push(it);
     }
+
     const orderedKeys = [
       ...CATEGORIES_ORDER.filter((k) => map.has(k)),
       ...Array.from(map.keys()).filter((k) => !CATEGORIES_ORDER.includes(k)),
     ];
-    return orderedKeys.map((key) => ({
-      key,
-      title: CATEGORY_LABELS[key] ?? key,
-      description:
-        key === "acm"
-          ? "Fachadas em ACM, acabamento premium e durável."
-          : key === "letra_caixa"
-          ? "Letras caixa para presença de marca com relevo."
-          : key === "luminoso"
-          ? "Luminosos com alta visibilidade noturna."
-          : key === "painel_impresso"
-          ? "Painéis impressos para comunicação visual ágil."
-          : undefined,
-      items: map.get(key)!,
-    }));
+
+    return orderedKeys.map((key) => {
+      const pool = map.get(key)!;
+
+      // ordena todos da categoria por `ordem` (indefinidos no fim)
+      const allSorted = pool
+        .slice()
+        .sort((a, b) => {
+          const diff = ordVal(a.ordem) - ordVal(b.ordem);
+          return diff !== 0 ? diff : a.id.localeCompare(b.id);
+        })
+        .map((it) => it.media);
+
+      return {
+        key,
+        title: CATEGORY_LABELS[key] ?? key,
+        description:
+          key === "acm"
+            ? "Fachadas em ACM, acabamento premium e durável."
+            : key === "letra_caixa"
+            ? "Letras caixa para presença de marca com relevo."
+            : key === "luminoso"
+            ? "Luminosos com alta visibilidade noturna."
+            : key === "painel_impresso"
+            ? "Painéis impressos para comunicação visual ágil."
+            : undefined,
+        itemsAll: allSorted,
+        limit: 5,
+      };
+    });
   }, [items]);
 
+  /* ====================== MODO CLIENTE ======================
+     - ordena clientes pela menor `ordem` entre seus itens
+     - dentro do cliente mantém a ordem original do JSON
+     - mostra 6 primeiro e “ver mais +” revela o restante
+  */
   const groupsByClient: Group[] = useMemo(() => {
-    const map = new Map<string, Media[]>();
+    const map = new Map<string, Item[]>();
     for (const it of items) {
       if (!map.has(it.client)) map.set(it.client, []);
-      map.get(it.client)!.push(it.media);
+      map.get(it.client)!.push(it);
     }
-    const sorted = Array.from(map.keys()).sort((a, b) =>
-      a.localeCompare(b, "pt-BR", { sensitivity: "base" })
-    );
-    return sorted.map((key) => ({ key, title: key, items: map.get(key)! }));
+
+    const tuples = Array.from(map.entries()).map(([client, list]) => {
+      const minOrder = Math.min(...list.map((it) => ordVal(it.ordem)));
+      return { client, list, minOrder };
+    });
+
+    tuples.sort((a, b) => {
+      const diff = a.minOrder - b.minOrder;
+      return diff !== 0
+        ? diff
+        : a.client.localeCompare(b.client, "pt-BR", { sensitivity: "base" });
+    });
+
+    return tuples.map(({ client, list }) => ({
+      key: client,
+      title: client,
+      itemsAll: list.map((it) => it.media), // mantém ordem original
+      limit: 6,
+    }));
   }, [items]);
 
   const currentGroups =
     mode === "categoria" ? groupsByCategory : groupsByClient;
 
+  /* ===================== Lightbox ===================== */
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxItems, setLightboxItems] = useState<Media[]>([]);
   const [lightboxIndex, setLightboxIndex] = useState(0);
@@ -298,7 +345,14 @@ export default function Portfolio() {
               onClick={() => setMode("categoria")}
               aria-pressed={mode === "categoria"}
             >
-              <IconGrid /> Categoria
+              {/* grid icon */}
+              <svg width="16" height="16" viewBox="0 0 24 24">
+                <path
+                  fill="currentColor"
+                  d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 8v-8h8v8h-8z"
+                />
+              </svg>
+              Categoria
             </button>
             <button
               className={`px-4 py-2 rounded-full text-sm transition flex items-center gap-2 ${
@@ -314,37 +368,68 @@ export default function Portfolio() {
               onClick={() => setMode("cliente")}
               aria-pressed={mode === "cliente"}
             >
-              <IconUsers /> Cliente
+              {/* users icon */}
+              <svg width="16" height="16" viewBox="0 0 24 24">
+                <path
+                  fill="currentColor"
+                  d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3s1.34 3 3 3m-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5S5 6.34 5 8s1.34 3 3 3m0 2c-2.33 0-7 1.17-7 3.5V20h14v-3.5C19 14.17 14.33 13 12 13m8 1c-.29 0-.62.02-.97.05c1.16.84 1.97 1.93 1.97 3.45V20h3v-3.5c0-2.33-4.67-3.5-7-3.5z"
+                />
+              </svg>
+              Cliente
             </button>
           </div>
         </div>
 
         {/* Grupos */}
         <div className="mt-10 space-y-16">
-          {currentGroups.map((group) => (
-            <section
-              key={group.key}
-              className="rounded-2xl border border-white/10 from-white/5 to-white/[0.03] p-5 sm:p-6 shadow-[0_6px_30px_-12px_rgba(0,0,0,0.5)]"
-            >
-              <div className="mb-4 text-center">
-                <h3 className="text-xl sm:text-2xl text-white font-medium tracking-tight">
-                  {group.title}
-                </h3>
-                {group.description && (
-                  <p className="text-white/70 text-sm mt-1">
-                    {group.description}
-                  </p>
-                )}
-              </div>
+          {currentGroups.map((group) => {
+            const isOpen = !!expanded[group.key];
+            const visibleItems = isOpen
+              ? group.itemsAll
+              : group.itemsAll.slice(0, group.limit);
+            const hasMore = group.itemsAll.length > group.limit;
 
-              <MasonryGallery
-                items={group.items}
-                onOpen={(idx) => openLightbox(group.items, idx)}
-                minColumnWidth={160}
-                gap={16}
-              />
-            </section>
-          ))}
+            return (
+              <section
+                key={group.key}
+                className="rounded-2xl border border-white/10 from-white/5 to-white/[0.03] p-5 sm:p-6 shadow-[0_6px_30px_-12px_rgba(0,0,0,0.5)]"
+              >
+                <div className="mb-4 text-center">
+                  <h3 className="text-xl sm:text-2xl text-white font-medium tracking-tight">
+                    {group.title}
+                  </h3>
+                  {group.description && (
+                    <p className="text-white/70 text-sm mt-1">
+                      {group.description}
+                    </p>
+                  )}
+                </div>
+
+                <MasonryGallery
+                  items={visibleItems}
+                  onOpen={(idx) => openLightbox(visibleItems, idx)}
+                />
+
+                {/* Linha de ação */}
+                {hasMore && (
+                  <div className="mt-4 flex items-center justify-center">
+                    <button
+                      onClick={() =>
+                        setExpanded((prev) => ({
+                          ...prev,
+                          [group.key]: !prev[group.key],
+                        }))
+                      }
+                      className="px-4 py-2 rounded-full border border-yellow-400/50 text-yellow-300 hover:bg-yellow-400/10 transition text-sm"
+                      aria-expanded={isOpen}
+                    >
+                      {isOpen ? "ver menos ↑" : "ver mais +"}
+                    </button>
+                  </div>
+                )}
+              </section>
+            );
+          })}
         </div>
       </div>
 
