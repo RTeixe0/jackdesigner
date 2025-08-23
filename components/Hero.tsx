@@ -12,7 +12,7 @@ export default function Hero() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImage((prev) => (prev === 0 ? 1 : 0));
-    }, 5000); // alterna a cada 5s
+    }, 4000);
     return () => clearInterval(interval);
   }, []);
 
@@ -36,7 +36,6 @@ export default function Hero() {
         <div className="hidden md:block absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-black/25 to-transparent pointer-events-none" />
       </div>
 
-      {/* Texto + CTAs (igual ao seu código) */}
       <div className="mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8">
         <header className="mx-auto text-center">
           <h1
