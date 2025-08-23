@@ -392,7 +392,7 @@ export default function Portfolio() {
             return (
               <section
                 key={group.key}
-                className="rounded-2xl border border-white/10 from-white/5 to-white/[0.03] p-5 sm:p-6 shadow-[0_6px_30px_-12px_rgba(0,0,0,0.5)]"
+                className="rounded-2xl border-white/10 from-white/5 to-white/[0.03] p-5 sm:p-6 shadow-[0_6px_30px_-12px_rgba(0,0,0,0.5)]"
               >
                 <div className="mb-4 text-center">
                   <h3 className="text-xl sm:text-2xl text-white font-medium tracking-tight">
