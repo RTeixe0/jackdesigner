@@ -3,9 +3,7 @@ import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Sobre from "@/components/Sobre";
 import Portfolio from "@/components/Portfolio";
-import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
-import ScrollToTopButton from "@/components/ScrollToTopButton";
 
 export const metadata: Metadata = {
   title: "Fachadas e Letreiros em Mogi Guaçu | Jack Designer",
@@ -55,10 +53,8 @@ export default function Page() {
         <Hero />
         <Sobre />
         <Portfolio />
-        <ContactSection />
       </main>
       <Footer />
-      <ScrollToTopButton />
     </div>
   );
 }
