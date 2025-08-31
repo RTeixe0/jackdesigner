@@ -1,41 +1,85 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
 const WHATSAPP = "5519996565458";
 
 export default function Hero() {
-  const images = ["/hero.jpg", "/hero2.jpg"];
-  const [currentImage, setCurrentImage] = useState(0);
+  // Certifique-se de ter esses arquivos em /public
+  const images = ["/hero1.jpg", "/hero2.jpg", "/hero3.jpg", "/hero4.jpg"];
 
+  const [current, setCurrent] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Troca automática (incremento circular)
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImage((prev) => (prev === 0 ? 1 : 0));
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
+    if (images.length <= 1 || paused) return;
+
+    timerRef.current = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % images.length);
+    }, 3000);
+
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [images.length, paused]);
+
+  // Handlers para pausar SOMENTE quando pressiona (mouse ou toque)
+  const handlePointerDown = () => setPaused(true);
+  const handlePointerUp = () => setPaused(false);
+  const handlePointerCancel = () => setPaused(false);
+  const handlePointerLeave = () => setPaused(false);
 
   return (
     <section id="hero" aria-label="Destaque Jack Designer">
       {/* Hero com crossfade */}
-      <div className="relative w-full h-[36vh] sm:h-[46vh] md:h-[66vh] lg:h-[76vh] overflow-hidden">
+      <div
+        className="relative w-full h-[36vh] sm:h-[46vh] md:h-[66vh] lg:h-[76vh] overflow-hidden select-none touch-pan-y"
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerCancel}
+        onPointerLeave={handlePointerLeave}
+        role="region"
+        aria-roledescription="carrossel"
+        aria-live="polite"
+      >
         {images.map((src, index) => (
           <Image
             key={src}
             src={src}
             alt="Fachada da Jack Designer com letras em ACM e iluminação"
             fill
-            priority
+            priority={index === 0}
             sizes="100vw"
             className={`object-contain md:object-cover absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-              index === currentImage ? "opacity-100" : "opacity-0"
+              index === current ? "opacity-100" : "opacity-0"
             }`}
           />
         ))}
+
+        {/* Vinheta sutil no rodapé */}
         <div className="hidden md:block absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-black/25 to-transparent pointer-events-none" />
+
+        {/* Indicadores (bolinhas) */}
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2">
+          {images.map((_, i) => (
+            <button
+              key={i}
+              aria-label={`Ir para imagem ${i + 1}`}
+              onClick={() => setCurrent(i)}
+              className={`h-2.5 w-2.5 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[--color-brand-yellow] ${
+                i === current
+                  ? "scale-110 bg-white"
+                  : "bg-white/40 hover:bg-white/70"
+              }`}
+            />
+          ))}
+        </div>
       </div>
 
+      {/* Conteúdo e CTAs */}
       <div className="mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8">
         <header className="mx-auto text-center">
           <h1
@@ -80,6 +124,7 @@ export default function Hero() {
               WebkitTextFillColor: "#0a0a0a",
             }}
           >
+            {/* Ícone WhatsApp */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="currentColor"
