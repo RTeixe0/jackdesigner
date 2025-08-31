@@ -4,6 +4,7 @@ import Hero from "@/components/Hero";
 import Sobre from "@/components/Sobre";
 import Portfolio from "@/components/Portfolio";
 import Footer from "@/components/Footer";
+import Videos from "@/components/Videos";
 
 export const metadata: Metadata = {
   title: "Fachadas e Letreiros em Mogi Guaçu | Jack Designer",
@@ -51,6 +52,7 @@ export default function Page() {
       <Header />
       <main className="pt-36 md:pt-40 lg:pt-44">
         <Hero />
+        <Videos />
         <Sobre />
         <Portfolio />
       </main>
