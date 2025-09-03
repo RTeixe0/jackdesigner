@@ -1,3 +1,4 @@
+// app/page.tsx
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
@@ -12,37 +13,39 @@ export const metadata: Metadata = {
     "Fachadas em ACM, letras caixa e luminosos com execução premium em Mogi Guaçu. Projeto, fabricação e instalação.",
   keywords: [
     "fachadas Mogi Guaçu",
+    "fachadas em ACM",
     "ACM Mogi Guaçu",
     "letras caixa",
-    "luminosos",
+    "letreiros luminosos",
     "comunicação visual",
+    "letreiros Mogi Guaçu",
   ],
+  alternates: {
+    canonical: "https://jackdesign.com.br/",
+  },
   openGraph: {
+    type: "website",
+    url: "https://jackdesign.com.br/",
+    siteName: "Jack Designer",
     title: "Fachadas e Letreiros em Mogi Guaçu | Jack Designer",
     description:
       "Projeto, fabricação e instalação de fachadas em ACM, letras caixa e luminosos em Mogi Guaçu e região.",
-    url: "https://jackdesigner.com.br",
-    siteName: "Jack Designer",
     images: [
       {
-        url: "https://jackdesigner.com.br/og-cover.jpg",
-        width: 1200,
+        url: "https://jackdesign.com.br/og.jpg",
+        width: 1120,
         height: 630,
-        alt: "Jack Designer — Fachadas e letreiros",
+        alt: "Jack Designer — Fachadas e letreiros em Mogi Guaçu",
       },
     ],
     locale: "pt_BR",
-    type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "Fachadas e Letreiros em Mogi Guaçu | Jack Designer",
     description:
       "Execução premium em ACM, letras caixa e luminosos. Solicite um orçamento.",
-    images: ["https://jackdesigner.com.br/og-cover.jpg"],
-  },
-  alternates: {
-    canonical: "https://jackdesigner.com.br/",
+    images: ["https://jackdesign.com.br/og.jpg"],
   },
 };
 

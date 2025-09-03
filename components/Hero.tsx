@@ -19,7 +19,7 @@ export default function Hero() {
 
     timerRef.current = setInterval(() => {
       setCurrent((prev) => (prev + 1) % images.length);
-    }, 3000);
+    }, 4000);
 
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
