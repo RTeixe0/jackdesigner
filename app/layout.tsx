@@ -51,7 +51,6 @@ export const metadata: Metadata = {
     icon: "/favicon.ico",
     apple: "/apple-touch-icon.png", // crie se quiser suporte a iOS PWA
   },
-  themeColor: "#0a0a0a",
 };
 
 export default function RootLayout({
