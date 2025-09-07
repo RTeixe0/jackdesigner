@@ -4,6 +4,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import ScrollToTop from "@/components/ScrollToTop";
+import Script from "next/script";
+import GA from "@/components/GA";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://jackdesign.com.br"), // canonical sem www
+  metadataBase: new URL("https://jackdesign.com.br"),
   title: "Fachadas e Letreiros em Mogi Guaçu | Jack Designer",
   description:
     "Fachadas em ACM, letras caixa e luminosos com execução premium em Mogi Guaçu. Projeto, fabricação e instalação.",
@@ -30,7 +32,7 @@ export const metadata: Metadata = {
       "Fachadas em ACM, letras caixa e luminosos com execução premium em Mogi Guaçu. Projeto, fabricação e instalação.",
     images: [
       {
-        url: "/og.jpg", // coloque em /public (1200x630, <512KB)
+        url: "/og.jpg",
         width: 1120,
         height: 630,
         alt: "Jack Designer — letreiros e fachadas em Mogi Guaçu",
@@ -45,13 +47,14 @@ export const metadata: Metadata = {
       "Fachadas em ACM, letras caixa e luminosos com execução premium.",
     images: ["/og.jpg"],
   },
-  // Google pode exibir miniatura grande nas SERPs/Discover
   robots: "index, follow, max-image-preview:large",
   icons: {
     icon: "/favicon.ico",
-    apple: "/apple-touch-icon.png", // crie se quiser suporte a iOS PWA
+    apple: "/apple-touch-icon.png",
   },
 };
+
+const GA_ID = "G-YH3XZBMVL7"; // sem .env, hardcoded
 
 export default function RootLayout({
   children,
@@ -79,9 +82,29 @@ export default function RootLayout({
 
   return (
     <html lang="pt-BR">
+      <head>
+        {/* GA4 otimizado */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            window.gtag = gtag;
+            gtag('js', new Date());
+            // desabilita o page_view automático — controlaremos via <GA />
+            gtag('config', '${GA_ID}', { send_page_view: false });
+          `}
+        </Script>
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        {/* page_view em cada navegação */}
+        <GA />
+
         {children}
 
         {/* Globais */}
