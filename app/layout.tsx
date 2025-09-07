@@ -6,6 +6,7 @@ import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import ScrollToTop from "@/components/ScrollToTop";
 import Script from "next/script";
 import GA from "@/components/GA";
+import { Suspense } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -48,17 +49,15 @@ export const metadata: Metadata = {
     images: ["/og.jpg"],
   },
   robots: "index, follow, max-image-preview:large",
-  icons: {
-    icon: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
-  },
 };
 
-const GA_ID = "G-YH3XZBMVL7"; // sem .env, hardcoded
+const GA_ID = "G-YH3XZBMVL7";
 
 export default function RootLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+}: {
+  children: React.ReactNode;
+}) {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
@@ -83,7 +82,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <head>
-        {/* GA4 otimizado */}
+        {/* GA4 */}
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
           strategy="afterInteractive"
@@ -94,7 +93,6 @@ export default function RootLayout({
             function gtag(){dataLayer.push(arguments);}
             window.gtag = gtag;
             gtag('js', new Date());
-            // desabilita o page_view automático — controlaremos via <GA />
             gtag('config', '${GA_ID}', { send_page_view: false });
           `}
         </Script>
@@ -102,19 +100,19 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/* page_view em cada navegação */}
-        <GA />
+        {/* ⬇️ Envolvido em Suspense para permitir useSearchParams/usePathname */}
+        <Suspense fallback={null}>
+          <GA />
+        </Suspense>
 
         {children}
 
-        {/* Globais */}
         <FloatingWhatsApp
           phone="5519996565458"
           message="Olá! Vim pelo site da Jack Designer e gostaria de um orçamento para letreiros e fachadas. Pode me ajudar?"
         />
         <ScrollToTop />
 
-        {/* JSON-LD para SEO Local */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
