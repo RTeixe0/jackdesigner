@@ -29,11 +29,29 @@
 /* ===========================
    🖋️ Estilos base
    =========================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth; /* rolagem suave global */
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
   line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Destaca seleção com a cor da marca */
+::selection {
+  background: color-mix(in srgb, var(--brand-yellow) 28%, transparent);
+  color: var(--brand-white);
 }
 
 /* ===========================
@@ -48,7 +66,57 @@ a:hover {
   color: var(--brand-gold);
 }
 
-/* ==== Efeitos Globais ==== */
+/* ===========================
+   ♿ Acessibilidade (foco visível e elegante)
+   =========================== */
+:where(a, button, [role="button"], input, select, textarea):focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--brand-yellow) 65%, transparent);
+  outline-offset: 2px;
+  border-radius: 999px;
+}
+
+/* ===========================
+   🧭 Âncoras: compensa o header fixo
+   =========================== */
+#hero,
+#videos,
+#sobre,
+#portfolio,
+#orcamento {
+  scroll-margin-top: 96px;
+}
+@media (min-width: 768px) {
+  #hero,
+  #videos,
+  #sobre,
+  #portfolio,
+  #orcamento {
+    scroll-margin-top: 112px;
+  }
+}
+@media (min-width: 1024px) {
+  #hero,
+  #videos,
+  #sobre,
+  #portfolio,
+  #orcamento {
+    scroll-margin-top: 128px;
+  }
+}
+
+/* ===========================
+   🚫 Barra de rolagem oculta (pillbar mobile)
+   =========================== */
+.no-scrollbar {
+  scrollbar-width: none; /* Firefox */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+/* ===========================
+   ✨ Efeitos Globais
+   =========================== */
 @keyframes fadeDown {
   from {
     opacity: 0;
@@ -90,6 +158,7 @@ a:hover {
   );
   animation: shine 2.4s ease-in-out infinite;
 }
+
 @media (prefers-reduced-motion: reduce) {
   .header-appear {
     animation: none;
@@ -99,7 +168,7 @@ a:hover {
   }
 }
 
-/* Linha animada */
+/* Linha dourada animada do header */
 @keyframes lineShine {
   0% {
     background-position: -200% 0;
@@ -150,15 +219,21 @@ a:hover {
   animation: floatY 2.2s ease-in-out infinite;
 }
 
-/* Neutraliza links dentro de CTAs */
+/* Neutraliza links dentro de CTAs (herdam cor do botão) */
 .cta :is(a, a *) {
   color: inherit !important;
   fill: inherit !important;
 }
-html {
-  scroll-behavior: smooth;
+
+/* ===========================
+   🪄 Toques finos visuais
+   =========================== */
+/* Suaviza bordas de imagens (sem blur) */
+img {
+  image-rendering: -webkit-optimize-contrast;
 }
-.break-inside-avoid {
-  break-inside: avoid;
-  -webkit-column-break-inside: avoid;
+
+/* Micro sombra dourada para elementos com hover sutil */
+.hover-gold-glow:hover {
+  box-shadow: 0 0 16px rgba(255, 212, 59, 0.25);
 }
