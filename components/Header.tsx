@@ -206,7 +206,7 @@ export default function Header() {
               : "max-h-[320px] opacity-100 translate-y-0",
           ].join(" ")}
         >
-          <ul className="flex flex-wrap justify-center gap-2">
+          <ul className="flex flex-wrap mt-2 mb-2 justify-center gap-2">
             {NAV.map(({ href, label, icon: Icon }) => (
               <li
                 key={href}
